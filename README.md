@@ -102,51 +102,76 @@ Los modelos basados en árboles resultan más adecuados cuando la **explicabilid
 
 ---
 
-## Práctica 2: Clasificación de imágenes
+## Práctica 2: Clasificación de imágenes (Perros vs Gatos)
 
 ### Dataset
 
-**Oxford-IIIT Pet Dataset**
+**Oxford-IIIT Pet Dataset**  
 [https://www.kaggle.com/datasets/tanlikesmath/the-oxfordiiit-pet-dataset](https://www.kaggle.com/datasets/tanlikesmath/the-oxfordiiit-pet-dataset)
 
-* Imágenes RGB de perros y gatos
-* Alta variabilidad visual
-* Problema: **Clasificación de imágenes**
+- Imágenes RGB de 37 razas de gatos y perros (en esta práctica: subconjunto binario **Gato vs Perro**)
+- Alta variabilidad visual (posturas, iluminación, fondo, raza)
+- **Tarea**: Clasificación binaria de imágenes
 
 ### Modelos aplicados
 
-* **SVM (LinearSVC)**
-* **CNN (Convolutional Neural Network)**
+- **SVM** (LinearSVC) – baseline clásico
+- **CNN** (Convolutional Neural Network) – enfoque deep learning
 
 ### Flujo del proceso
 
-1. Carga de imágenes
-2. Conversión a escala de grises
-3. Redimensionamiento (64×64)
-4. Vectorización (SVM)
-5. Entrenamiento de modelos
-6. Visualización XAI
+1. Carga y preprocesamiento de imágenes
+2. Conversión a escala de grises + redimensionamiento (64×64)
+3. Vectorización de imágenes (para SVM)
+4. División train / validation / test
+5. Entrenamiento de ambos modelos
+6. Evaluación + visualización de explicabilidad (XAI)
 
 ### Enfoque XAI
 
-* **SVM**: visualización de pesos como mapas de calor
-* **CNN**: análisis de regiones activadas (conceptual)
+- **SVM**: Visualización de los pesos del clasificador como mapa de calor
+- **CNN**: Análisis conceptual de regiones activadas (enfoque cualitativo en esta práctica)
 
 ### Resultados clave
 
-* SVM genera mapas ruidosos
-* Falta de alineación espacial en imágenes
-* Los píxeles no representan semántica fija
+#### SVM
+- Genera mapas de pesos **ruidosos** y poco interpretables
+- Busca patrones espaciales rígidos → no captura bien la variabilidad natural de las imágenes
+- Rendimiento inferior al de la CNN (no se detalla aquí la métrica exacta, pero visiblemente peor)
+
+#### CNN
+- **Accuracy final en conjunto de test**: **80.58%**
+- Comportamiento durante el entrenamiento:
+  - Accuracy en entrenamiento → sube de forma sostenida hasta ~98%
+  - Accuracy en validación → se estabiliza alrededor de **~80–82%** (evidencia clara de **sobreajuste**)
+  - Pérdida (loss) en entrenamiento → disminuye correctamente
+  - Pérdida en validación → **aumenta** significativamente después de varias épocas → confirma sobreajuste
+
+**Matriz de confusión (test)**
+
+| True \ Predicted | Gato       | Perro      |
+|------------------|------------|------------|
+| **Gato**         | 288        | 192        |
+| **Perro**        | 95         | 903        |
+
+- Total de ejemplos de gatos: 288 + 192 = **480**
+- Total de ejemplos de perros: 95 + 903 = **998**
+- **Fuerte sesgo hacia la clase "Perro"** (el modelo predice "Perro" en la mayoría de los casos)
+- Recall para "Gato" ≈ 60% (288/480) → muchos gatos clasificados erróneamente como perros
+- Recall para "Perro" ≈ 90.5% (903/998) → muy buen desempeño en la clase mayoritaria
 
 ### Limitaciones detectadas
 
-* El SVM busca correlaciones espaciales rígidas
-* No captura jerarquías visuales
-* Explicabilidad matemática ≠ explicabilidad semántica
+- **Sobreajuste evidente** en la CNN (divergencia train/val loss)
+- Desbalance de clases en el conjunto de evaluación (~2:1 perros:gatos) → sesgo hacia la clase mayoritaria
+- Preprocesamiento simple (grises + 64×64) → pérdida importante de información (color y resolución)
+- El SVM, aunque matemáticamente interpretable, **no captura jerarquías visuales** → mapas de pesos poco semánticos
+- Explicabilidad matemática (SVM) ≠ explicabilidad semántica/humanamente comprensible
 
 ### Conclusión práctica 2
 
-Aunque el SVM es explicable matemáticamente, **no es adecuado para visión por computador compleja**. Las CNN son superiores, pero requieren técnicas XAI adicionales.
+Aunque el **SVM** ofrece explicabilidad directa a nivel de píxeles, **no es adecuado** para tareas de visión por computador con alta variabilidad como esta.  
+Las **CNN** logran un rendimiento significativamente superior (**80.58%** en test), pero muestran **sobreajuste** 
 
 ---
 
@@ -174,7 +199,8 @@ Proyecto-XAI
  ┣ 📂 data
  ┣ 📂 notebooks
  ┃ ┣ DecisionTree.ipynb
- ┃ ┣ SMV_Uzhca.ipynb
+ ┃ ┣ SMV.ipynb
+ ┃ ┣ CNN.ipynb
  ┣ 📄 README.md
  ┗ 📄 X-ai.pdf
 ```
@@ -192,3 +218,4 @@ Proyecto-XAI
 ## Conclusión general
 
 La **Explainable AI** es esencial para una adopción responsable de modelos de IA. Este proyecto evidencia que **comprender el porqué de una predicción es tan importante como el resultado mismo**, especialmente en contextos reales donde la confianza y la transparencia son fundamentales.
+Depende mucho del conte

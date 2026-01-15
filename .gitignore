@@ -1,0 +1,20 @@
+# --- Entorno Virtual (Tu petición principal) ---
+venv/
+
+# --- Jupyter Notebooks (Visible en tu directorio) ---
+.ipynb_checkpoints/
+
+# --- Python General ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Sistema Operativo (Windows) ---
+Thumbs.db
+Desktop.ini
+
+# --- Opcional: Datos ---
+# Si tu carpeta 'data' contiene el dataset de imágenes o el CSV
+# es buena práctica ignorarla para no subir archivos pesados a Git.
+# Descomenta la siguiente línea si quieres ignorarla:
+# data/
